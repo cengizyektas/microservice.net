@@ -1,0 +1,65 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres
+    container_name: Postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+        net: 
+            ipv4_address: 10.10.0.2
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5443:443"
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: cengiz_yektas@hotmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+        net: 
+            ipv4_address: 10.10.0.3
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  orderservis:
+    image: orderservis
+    container_name: orderservis
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: cengiz_yektas@hotmail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+        net: 
+            ipv4_address: 10.10.0.4   
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.0.0/24
+volumes:
+  local_pgdata:
+  pgadmin-data:
+
+
+   
